@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="fr" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>BelloCaisse — La caisse intelligente des commerçants tunisiens</title>
+    <meta name="description" content="Votre caisse dans la poche. Vendez, scannez, suivez vos bénéfices en dinars, même sans internet. Sur Android, iOS, Windows, macOS, Linux et le web." />
+    <link rel="icon" type="image/png" href="bellocaisse_icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&family=Tajawal:wght@400;500;700&display=swap"
+    />
+    <link rel="stylesheet" href="hark.css" />
+    <link rel="stylesheet" href="hark-hero.css" />
+    <style>
+      :root {
+        --x-emerald: #0e9f6e;
+        --x-emerald-dark: #064e3b;
+        --x-coral: #ff6b5b;
+        --x-ink: light-dark(#064e3b, #d1fae5);
+        --x-sand: light-dark(#f7f1e6, #1f2421);
+        --x-white: #ffffff;
+      }
+      :root[lang="ar"] {
+        --sans: "Tajawal", "Noto Naskh Arabic", "Noto Sans Arabic", "Segoe UI", Tahoma, system-ui, sans-serif;
+      }
+      /* RTL: keep the hero scrim behind the text and the section subtitle on the far side */
+      [dir="rtl"] .hero::after {
+        background:
+          linear-gradient(to top, var(--hero-scrim-strong) 0%, var(--hero-scrim-soft) 42%, transparent 66%),
+          linear-gradient(to left, var(--hero-scrim-side) 0%, transparent 60%);
+      }
+      @media (min-width: 901px) { [dir="rtl"] .head__sub { text-align: left; } }
+
+      /* Brand header */
+      .x-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .x-brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; min-height: var(--tap); }
+      .x-brand img { width: 36px; height: 36px; border-radius: 10px; }
+      .x-word { font: var(--weight-bold) var(--size-heading)/1 var(--sans); letter-spacing: -0.01em; direction: ltr; unicode-bidi: isolate; }
+      .x-word b { color: var(--x-emerald); font-weight: inherit; }
+      .x-word span { color: var(--x-ink); }
+      .x-lang { display: inline-flex; padding: 3px; gap: 2px; border-radius: var(--r-pill); background: var(--fill-tertiary); }
+      .x-lang button {
+        min-height: 38px; min-width: var(--tap); padding: 0 14px; border: 0; border-radius: var(--r-pill);
+        background: transparent; color: var(--text-secondary); font: var(--type-label); cursor: pointer;
+      }
+      .x-lang button[lang="ar"] { font-family: "Tajawal", "Noto Naskh Arabic", system-ui, sans-serif; }
+      .x-lang button[aria-pressed="true"] { background: var(--x-emerald-dark); color: var(--x-white); }
+      @media (max-width: 599px) { .x-lang button { min-height: var(--tap); } }
+
+      /* Zellige-inspired divider */
+      .x-zellige {
+        height: 32px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%230E9F6E' stroke-width='1.4'%3E%3Crect x='9' y='9' width='14' height='14'/%3E%3Crect x='9' y='9' width='14' height='14' transform='rotate(45 16 16)'/%3E%3Cpath d='M0 16h4M28 16h4M16 0v4M16 28v4'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23FF6B5B'/%3E%3C/svg%3E") center / 32px 32px repeat-x;
+        opacity: 0.75;
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+        mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent);
+      }
+      .x-zellige + .section { border-top: 0; }
+
+      /* Primary call to action */
+      .x-cta {
+        display: inline-flex; align-items: center; gap: 8px; min-height: var(--tap); padding: 10px 18px;
+        border-radius: var(--r-s); border: 1px solid var(--x-emerald);
+        background: var(--x-emerald-dark); color: var(--x-white);
+        font: var(--type-label); text-decoration: none; transition: box-shadow var(--dur-quick) ease;
+      }
+      .x-cta::before { content: "\2193"; font-weight: var(--weight-bold); }
+      .x-cta:hover { box-shadow: inset 0 0 0 100px rgb(255 255 255 / 0.1); }
+      .x-cta--light { background: var(--x-white); color: var(--x-emerald-dark); border-color: var(--x-white); }
+      .x-cta--light:hover { box-shadow: inset 0 0 0 100px rgb(6 78 59 / 0.08); }
+      .hero .links .btn { min-height: var(--tap); }
+
+      /* Trust badges on the hero */
+      .x-trust { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+      .x-trust li {
+        display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: var(--r-pill);
+        background: var(--hero-glass); border: 1px solid var(--hero-glass-stroke);
+        -webkit-backdrop-filter: var(--hark-blur); backdrop-filter: var(--hark-blur); font: var(--type-tag);
+      }
+      .x-trust li::before { content: "\2713"; color: var(--x-coral); font-weight: var(--weight-bold); }
+
+      /* Sand band and pricing */
+      .x-sand { background: var(--x-sand); border-radius: var(--r-xl); padding-inline: clamp(16px, 3vw, 32px); }
+      .x-sand .section { border-top: 0; }
+      .x-sand .cards > div { background: var(--fill-primary-on); }
+      .x-launch {
+        display: inline-block; justify-self: start; padding: 4px 12px; border-radius: var(--r-pill);
+        background: var(--x-coral); color: #3a0a04; font: var(--type-tag);
+      }
+      .x-plan--pick { box-shadow: inset 0 0 0 2px var(--x-emerald); }
+      .x-price { font: var(--type-figure); margin-bottom: 4px; }
+      .x-price small { font: var(--type-small); color: var(--text-secondary); }
+      .x-plan .fineprint { margin-bottom: 8px; }
+      .x-plan .x-cta, .x-plan .chip { margin-bottom: 12px; }
+      .x-plan { display: flex; flex-direction: column; }
+      .x-plan ul { flex: 1; }
+      .x-plan > .chip { align-self: flex-start; }
+      .x-plan > .btn { align-self: flex-start; margin-top: 18px; min-height: var(--tap); }
+
+      /* Platforms row */
+      .x-platforms .pill { padding: 8px 16px; font: var(--type-body-strong, var(--type-label)); }
+      .x-platforms { margin-bottom: 20px; }
+
+      /* Live demo phone frame */
+      .x-phone-wrap { display: grid; justify-items: center; }
+      .x-phone {
+        position: relative; width: min(390px, 100%); aspect-ratio: 390 / 780; max-height: 780px;
+        border: 10px solid var(--x-emerald-dark); border-radius: 46px; overflow: hidden;
+        background: var(--x-white); box-shadow: var(--hark-shadow);
+      }
+      .x-phone::before {
+        content: ""; position: absolute; top: 8px; left: 50%; width: 90px; height: 22px; transform: translateX(-50%);
+        border-radius: var(--r-pill); background: var(--x-emerald-dark); z-index: 1; pointer-events: none;
+      }
+      .x-phone iframe { display: block; width: 100%; height: 100%; border: 0; }
+      .x-demo-side { display: grid; gap: 16px; align-content: start; }
+
+      /* Governorates */
+      .x-govs { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+      .x-govs .pill { padding: 4px 12px; font: var(--type-label); }
+
+      /* FAQ accordion */
+      .x-faq { max-width: 780px; border-top: 1px solid var(--stroke-secondary); }
+      .x-faq details { border-bottom: 1px solid var(--stroke-secondary); }
+      .x-faq summary {
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        min-height: var(--tap); padding: 14px 0; font: var(--type-body-strong); cursor: pointer; list-style: none;
+      }
+      .x-faq summary::-webkit-details-marker { display: none; }
+      .x-faq summary::after {
+        content: "+"; flex: none; font: var(--type-heading); color: var(--x-emerald);
+        transition: transform var(--dur-quick) var(--ease-out);
+      }
+      .x-faq details[open] summary::after { transform: rotate(45deg); }
+      .x-faq details p { padding: 0 0 18px; color: var(--text-secondary); max-width: 68ch; }
+
+      /* Final call to action */
+      .x-final {
+        position: relative; overflow: hidden; display: grid; gap: 18px; justify-items: start;
+        padding: clamp(28px, 5vw, 56px); border-radius: var(--r-xl);
+        background: var(--x-emerald-dark); color: var(--x-white); box-shadow: var(--hark-shadow);
+      }
+      .x-final::after {
+        content: ""; position: absolute; inset: auto 0 0 0; height: 32px; opacity: 0.5;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cg fill='none' stroke='%23F7F1E6' stroke-width='1.2'%3E%3Crect x='9' y='9' width='14' height='14'/%3E%3Crect x='9' y='9' width='14' height='14' transform='rotate(45 16 16)'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='2.2' fill='%23FF6B5B'/%3E%3C/svg%3E") left / 32px 32px repeat-x;
+      }
+      .x-final h2 { font: var(--type-display); max-width: 22ch; }
+      .x-final p { color: rgb(255 255 255 / 0.85); }
+      .x-final .links { padding-bottom: 24px; }
+      .x-final .btn { min-height: var(--tap); }
+
+      .x-foot-brand { display: grid; gap: 6px; }
+      .x-foot-brand a:not(.x-brand) { color: var(--text-primary); }
+    </style>
+  </head>
+  <body>
+    <div class="page" id="top">
+      <div class="x-top">
+        <a class="x-brand" href="#top" aria-label="BelloCaisse">
+          <img src="bellocaisse_icon.png" alt="" width="36" height="36" />
+          <span class="x-word"><b>Bello</b><span>Caisse</span></span>
+        </a>
+        <div class="x-lang" id="x-lang" role="group" aria-label="Langue / اللغة"></div>
+      </div>
+
+      <header class="nav glass">
+        <nav class="seg" aria-label="Sections" data-i18n-attr="aria-label:nav.aria">
+          <a href="#probleme" data-i18n="nav.problem">Problème</a>
+          <a href="#solution" data-i18n="nav.features">Fonctions</a>
+          <a href="#plateformes" data-i18n="nav.platforms">Plateformes</a>
+          <a href="#pour-qui" data-i18n="nav.who">Pour qui</a>
+          <a href="#demo" data-i18n="nav.demo">Démo</a>
+          <a href="#tarifs" data-i18n="nav.pricing">Tarifs</a>
+          <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        </nav>
+        <button class="theme-btn" id="theme-btn" type="button" aria-label="Switch to dark theme"></button>
+      </header>
+
+      <main class="main">
+        <section class="hero">
+          <img class="hero__img" src="hero_bellocaisse.png" alt="Commerçant tunisien dans son hanout, encaissant avec l'app BelloCaisse" data-i18n-attr="alt:hero.alt" />
+          <div class="hero__copy">
+            <p class="hero__eyebrow" data-i18n="hero.eyebrow">BelloCaisse — La caisse intelligente des commerçants tunisiens</p>
+            <h1 data-i18n="hero.title">Votre caisse dans la poche.</h1>
+            <p class="hero__sub" data-i18n="hero.sub">Vendez, scannez, suivez vos bénéfices en dinars — même sans internet.</p>
+            <div class="links">
+              <a class="x-cta" href="#demo" data-i18n="cta.demo">Voir la démo</a>
+              <a class="btn" href="mailto:abdoubelloumi13@gmail.com?subject=Licence%20BelloCaisse" data-i18n="cta.quote">Demander un devis</a>
+            </div>
+            <ul class="x-trust">
+              <li data-i18n="trust.1">100% en dinar tunisien (DT, millimes)</li>
+              <li data-i18n="trust.2">Français &amp; العربية</li>
+              <li data-i18n="trust.3">Fonctionne hors ligne</li>
+              <li data-i18n="trust.5">Multiplateforme</li>
+              <li data-i18n="trust.6">Multi-utilisateur</li>
+              <li data-i18n="trust.4">23 044 produits tunisiens déjà référencés</li>
+            </ul>
+          </div>
+        </section>
+
+        <div class="x-zellige" aria-hidden="true"></div>
+
+        <section class="section" id="probleme" data-nav="Problème">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="problem.eyebrow">Le problème</p>
+            <h2 data-i18n="problem.title">Vous connaissez ces soucis par cœur.</h2>
+          </div>
+          <div class="cards">
+            <div><h3 data-i18n="p1.h">Le karné qui se perd</h3><p data-i18n="p1.t">Le cahier de crédit s'abîme ou se perd, et plus personne ne sait qui doit combien.</p></div>
+            <div><h3 data-i18n="p2.h">Erreurs de monnaie</h3><p data-i18n="p2.t">Un rendu de monnaie raté par jour, ce sont des dinars perdus chaque mois.</p></div>
+            <div><h3 data-i18n="p3.h">Le stock part sans prévenir</h3><p data-i18n="p3.t">Les rayons se vident et vous le découvrez quand le client demande.</p></div>
+            <div><h3 data-i18n="p4.h">Des caisses trop chères</h3><p data-i18n="p4.t">Une caisse enregistreuse coûte souvent 800 à 2 000 DT.</p></div>
+            <div><h3 data-i18n="p5.h">Aucune vision du bénéfice</h3><p data-i18n="p5.t">Le tiroir est plein, mais combien avez-vous vraiment gagné ?</p></div>
+          </div>
+        </section>
+
+        <section class="section" id="solution" data-nav="Fonctions">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="feat.eyebrow">La solution · app v1.2.0</p>
+            <h2 data-i18n="feat.title">Tout pour encaisser, déjà dans votre téléphone.</h2>
+          </div>
+          <div class="cards">
+            <div><h3 data-i18n="f1.h">Vente rapide et panier</h3><p data-i18n="f1.t">Ajoutez, ajustez les quantités, encaissez : la monnaie à rendre est calculée.</p></div>
+            <div><h3 data-i18n="f2.h">Scan code-barres</h3><p data-i18n="f2.t">La caméra du téléphone suffit, aucun lecteur à acheter.</p></div>
+            <div><h3 data-i18n="f3.h">Catalogue Tunisie</h3><p data-i18n="f3.t">23 044 produits (références Carrefour et Géant) pour créer votre stock en secondes.</p></div>
+            <div><h3 data-i18n="f4.h">Stock et alertes</h3><p data-i18n="f4.t">Suivez chaque article et soyez prévenu avant la rupture.</p></div>
+            <div><h3 data-i18n="f5.h">Rapports animés</h3><p data-i18n="f5.t">Ventes du jour, bénéfices, meilleurs produits.</p></div>
+            <div><h3 data-i18n="f6.h">Français et arabe</h3><p data-i18n="f6.t">Interface complète dans les deux langues, l'arabe de droite à gauche.</p></div>
+            <div><h3 data-i18n="f7.h">Onboarding guidé</h3><p data-i18n="f7.t">L'app vous accompagne pas à pas dès la première ouverture.</p></div>
+            <div><h3 data-i18n="f8.h">Sans internet</h3><p data-i18n="f8.t">Vendez même quand le réseau coupe.</p></div>
+          </div>
+        </section>
+
+        <div class="x-sand">
+          <section class="section" id="plateformes" data-nav="Plateformes">
+            <div class="head">
+              <p class="head__eyebrow" data-i18n="multi.eyebrow">Partout, pour toute l'équipe</p>
+              <h2 data-i18n="multi.title">Multiplateforme &amp; multi-utilisateur</h2>
+              <p class="head__sub" data-i18n="multi.sub">Une seule caisse sur tous vos appareils, avec un accès pour chacun.</p>
+            </div>
+            <div class="x-govs x-platforms">
+              <span class="pill">Android</span>
+              <span class="pill">iOS</span>
+              <span class="pill">Windows</span>
+              <span class="pill">macOS</span>
+              <span class="pill">Linux</span>
+              <span class="pill" data-i18n="multi.web">Navigateur web</span>
+            </div>
+            <div class="cards">
+              <div><h3 data-i18n="multi.c1.h">Tous vos appareils</h3><p data-i18n="multi.c1.t">Téléphone, tablette, ordinateur ou navigateur web : la même app sous Android, iOS, Windows, macOS et Linux.</p></div>
+              <div><h3 data-i18n="multi.c2.h">Plusieurs utilisateurs</h3><p data-i18n="multi.c2.t">Patron, caissiers, employés : chacun a son propre accès dans la boutique.</p></div>
+              <div><h3 data-i18n="multi.c3.h">Plusieurs caisses</h3><p data-i18n="multi.c3.t">Plusieurs appareils et caisses dans le même commerce.</p></div>
+            </div>
+          </section>
+        </div>
+
+        <div class="x-zellige" aria-hidden="true"></div>
+
+        <section class="section" id="pour-qui" data-nav="Pour qui">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="who.eyebrow">Pour qui</p>
+            <h2 data-i18n="who.title">Pour tous les commerces de Tunisie.</h2>
+            <p class="head__sub" data-i18n="who.sub">Hanout, supérette, café, restaurant, boutique, parapharmacie, quincaillerie, marché hebdomadaire.</p>
+          </div>
+          <div class="cards">
+            <div>
+              <figure class="cards__media"><img src="cafe_bellocaisse.png" alt="Serveur de café tunisien encaissant une commande avec BelloCaisse" data-i18n-attr="alt:s3.alt" /></figure>
+              <h3 data-i18n="s3.h">Cafés &amp; restaurants</h3><p data-i18n="s3.t">Vente en 2 touches, même au coup de feu.</p>
+            </div>
+            <div><h3 data-i18n="s1.h">Épiceries &amp; hanouts</h3><p data-i18n="s1.t">Fini le karné papier.</p></div>
+            <div><h3 data-i18n="s2.h">Supérettes</h3><p data-i18n="s2.t">Scan + stock, sans matériel en plus.</p></div>
+            <div><h3 data-i18n="s4.h">Boutiques &amp; prêt-à-porter</h3><p data-i18n="s4.t">Vos articles et vos ventes au même endroit.</p></div>
+            <div><h3 data-i18n="s5.h">Parapharmacies &amp; cosmétiques</h3><p data-i18n="s5.t">Scannez les références, suivez le stock.</p></div>
+            <div><h3 data-i18n="s6.h">Vendeurs de marché &amp; ambulants</h3><p data-i18n="s6.t">Tout sur le téléphone.</p></div>
+          </div>
+        </section>
+
+        <section class="section" id="etapes">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="how.eyebrow">Comment ça marche</p>
+            <h2 data-i18n="how.title">Prêt à vendre en trois étapes.</h2>
+          </div>
+          <div class="steps">
+            <article class="step">
+              <div class="step__intro"><p class="step__num">01</p><p class="step__eyebrow" data-i18n="how.s1.e">Étape 1</p></div>
+              <div><h3 data-i18n="how.s1.h">Demandez votre licence</h3><p data-i18n="how.s1.t">Écrivez-nous : nous vous envoyons un devis adapté à votre commerce.</p></div>
+            </article>
+            <article class="step">
+              <div class="step__intro"><p class="step__num">02</p><p class="step__eyebrow" data-i18n="how.s2.e">Étape 2</p></div>
+              <div><h3 data-i18n="how.s2.h">Installation sur vos appareils</h3><p data-i18n="how.s2.t">Android, iOS, Windows, macOS, Linux ou navigateur web, puis vos produits depuis le catalogue Tunisie.</p></div>
+            </article>
+            <article class="step">
+              <div class="step__intro"><p class="step__num">03</p><p class="step__eyebrow" data-i18n="how.s3.e">Étape 3</p></div>
+              <div><h3 data-i18n="how.s3.h">Encaissez et suivez vos bénéfices</h3><p data-i18n="how.s3.t">Chaque vente alimente vos rapports du jour.</p></div>
+            </article>
+          </div>
+        </section>
+
+        <div class="x-zellige" aria-hidden="true"></div>
+
+        <section class="section" id="demo" data-nav="Démo">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="demo.eyebrow">Démo en direct</p>
+            <h2 data-i18n="demo.title">Essayez l'app ici, sans rien installer.</h2>
+          </div>
+          <div class="pair">
+            <div class="x-phone-wrap">
+              <div class="x-phone">
+                <iframe data-demo-src src="https://bellocaisse.github.io/demo/" title="Démo BelloCaisse" data-i18n-attr="title:demo.frame" loading="lazy" width="390" height="780"></iframe>
+              </div>
+            </div>
+            <div class="x-demo-side">
+              <aside class="callout" aria-label="Démo" data-i18n-attr="aria-label:demo.head">
+                <p class="callout__head"><img src="bellocaisse_icon.png" alt="" width="16" height="16" /> <span data-i18n="demo.head">Démo</span></p>
+                <p class="callout__lead" data-i18n="demo.lead"><strong>La vraie app, dans votre navigateur.</strong> Faites une vente, puis ouvrez les rapports.</p>
+                <a class="btn" data-demo-href href="https://bellocaisse.github.io/demo/" target="_blank" rel="noopener" data-i18n="demo.full">Ouvrir la démo en plein écran</a>
+                <p class="fineprint" data-i18n="demo.note">Démo : données fictives, rien n'est enregistré.</p>
+              </aside>
+            </div>
+          </div>
+        </section>
+
+        <div class="x-sand">
+          <section class="section" id="tarifs" data-nav="Tarifs">
+            <div class="head">
+              <p class="head__eyebrow" data-i18n="price.eyebrow">Offre de lancement Tunisie</p>
+              <h2 data-i18n="price.title">Licences BelloCaisse — vendues à l'unité</h2>
+              <p class="head__sub" data-i18n="price.line">Bien moins cher qu'une caisse enregistreuse à 1 000 DT.</p>
+            </div>
+            <p><span class="x-launch" data-i18n="price.label">Prix de lancement</span></p>
+            <div class="cards">
+              <div class="x-plan">
+                <h3 data-i18n="plan.post">Licence Poste</h3>
+                <p class="x-price" data-i18n="plan.quote">Sur devis</p>
+                <p class="fineprint" data-i18n="plan.post.for">Pour une caisse.</p>
+                <ul>
+                  <li data-i18n="plan.post.1">1 appareil</li>
+                </ul>
+                <a class="btn" href="mailto:abdoubelloumi13@gmail.com?subject=Licence%20BelloCaisse" data-i18n="cta.quote">Demander un devis</a>
+              </div>
+              <div class="x-plan x-plan--pick">
+                <span class="chip chip--solid" data-i18n="plan.pick">Recommandé</span>
+                <h3 data-i18n="plan.pro">Licence Pro</h3>
+                <p class="x-price" data-i18n="plan.quote">Sur devis</p>
+                <p class="fineprint" data-i18n="plan.pro.for">Pour suivre le crédit et vos chiffres.</p>
+                <ul>
+                  <li data-i18n="plan.pro.1">Rapports avancés</li>
+                  <li data-i18n="plan.pro.2">Crédit clients (karné numérique)</li>
+                  <li data-i18n="plan.pro.3">Export</li>
+                  <li data-i18n="plan.pro.4">Sauvegarde</li>
+                </ul>
+                <a class="btn" href="mailto:abdoubelloumi13@gmail.com?subject=Licence%20BelloCaisse" data-i18n="cta.quote">Demander un devis</a>
+              </div>
+              <div class="x-plan">
+                <h3 data-i18n="plan.multi">Licence Multi-boutique</h3>
+                <p class="x-price" data-i18n="plan.quote">Sur devis</p>
+                <p class="fineprint" data-i18n="plan.multi.for">Pour les commerces avec une équipe.</p>
+                <ul>
+                  <li data-i18n="plan.multi.1">Plusieurs caisses et utilisateurs</li>
+                  <li data-i18n="plan.multi.2">Support prioritaire</li>
+                </ul>
+                <a class="btn" href="mailto:abdoubelloumi13@gmail.com?subject=Licence%20BelloCaisse" data-i18n="cta.quote">Demander un devis</a>
+              </div>
+            </div>
+            <p class="fineprint" data-i18n="price.pay">Paiement possible par D17, carte e-Dinar, virement ou espèces via nos ambassadeurs.</p>
+          </section>
+        </div>
+
+        <section class="section" id="pourquoi">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="cmp.eyebrow">Pourquoi BelloCaisse</p>
+            <h2 data-i18n="cmp.title">Plus complet qu'un cahier, moins cher qu'une caisse.</h2>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col" data-i18n="cmp.col0">Critère</th>
+                  <th scope="col">BelloCaisse</th>
+                  <th scope="col" data-i18n="cmp.col2">Caisse enregistreuse classique</th>
+                  <th scope="col" data-i18n="cmp.col3">Cahier papier</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r1">Coût de départ</th>
+                  <td data-i18n="v.license">Licence abordable</td>
+                  <td class="num" data-i18n="v.dtrange">800–2 000 DT</td>
+                  <td class="num" data-i18n="v.dt0">0 DT</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r2">Scan code-barres</th>
+                  <td data-i18n="v.yes">Oui</td><td data-i18n="v.yes">Oui</td><td class="muted" data-i18n="v.no">Non</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r3">Rapports bénéfices</th>
+                  <td data-i18n="v.yes">Oui</td><td class="muted" data-i18n="v.limited">Limité</td><td class="muted" data-i18n="v.no">Non</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r4">Arabe &amp; français</th>
+                  <td data-i18n="v.yes">Oui</td><td class="muted" data-i18n="v.rarely">Rarement</td><td class="muted">—</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r5">Sur votre téléphone</th>
+                  <td data-i18n="v.yes">Oui</td><td class="muted" data-i18n="v.no">Non</td><td class="muted" data-i18n="v.no">Non</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r6">Multi-utilisateur</th>
+                  <td data-i18n="v.yes">Oui</td><td class="muted" data-i18n="v.rarely">Rarement</td><td class="muted" data-i18n="v.no">Non</td>
+                </tr>
+                <tr>
+                  <th scope="row" data-i18n="cmp.r7">Multiplateforme</th>
+                  <td data-i18n="v.yes">Oui</td><td class="muted" data-i18n="v.no">Non</td><td class="muted" data-i18n="v.no">Non</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="x-zellige" aria-hidden="true"></div>
+
+        <section class="section" id="ambassadeurs">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="amb.eyebrow">Ambassadeurs &amp; parrainage</p>
+            <h2 data-i18n="amb.title">Un voisin commerçant ? Passez Pro ensemble.</h2>
+          </div>
+          <div class="cards">
+            <div><h3 data-i18n="amb.c1.h">Parrainage</h3><p class="quote" data-i18n="amb.c1.t">Parrainez un commerçant voisin : une remise sur votre prochaine licence.</p></div>
+            <div><h3 data-i18n="amb.c2.h">Ambassadeurs</h3><p class="quote" data-i18n="amb.c2.t">Ambassadeurs BelloCaisse dans chaque gouvernorat : installation gratuite en boutique.</p></div>
+          </div>
+          <div class="x-govs">
+            <span class="pill" data-i18n="g.tunis">Tunis</span>
+            <span class="pill" data-i18n="g.ariana">Ariana</span>
+            <span class="pill" data-i18n="g.benarous">Ben Arous</span>
+            <span class="pill" data-i18n="g.manouba">Manouba</span>
+            <span class="pill" data-i18n="g.sfax">Sfax</span>
+            <span class="pill" data-i18n="g.sousse">Sousse</span>
+            <span class="pill" data-i18n="g.monastir">Monastir</span>
+            <span class="pill" data-i18n="g.nabeul">Nabeul</span>
+            <span class="pill" data-i18n="g.bizerte">Bizerte</span>
+            <span class="pill" data-i18n="g.kairouan">Kairouan</span>
+            <span class="pill" data-i18n="g.gabes">Gabès</span>
+            <span class="pill" data-i18n="g.medenine">Médenine</span>
+            <span class="pill" data-i18n="g.gafsa">Gafsa</span>
+            <span class="fineprint" data-i18n="g.all">… et les 24 gouvernorats</span>
+          </div>
+        </section>
+
+        <section class="section" id="faq" data-nav="FAQ">
+          <div class="head">
+            <p class="head__eyebrow" data-i18n="faq.eyebrow">FAQ</p>
+            <h2 data-i18n="faq.title">Vos questions, nos réponses.</h2>
+          </div>
+          <div class="x-faq">
+            <details><summary data-i18n="faq.q1">Faut-il internet ?</summary><p data-i18n="faq.a1">Non. BelloCaisse fonctionne entièrement hors ligne.</p></details>
+            <details><summary data-i18n="faq.q2">Mes données sont-elles en sécurité ?</summary><p data-i18n="faq.a2">Elles sont stockées sur votre appareil, pas sur un serveur.</p></details>
+            <details><summary data-i18n="faq.q3">Quel appareil faut-il ?</summary><p data-i18n="faq.a3">Un appareil Android, iOS, Windows, macOS ou Linux, ou simplement un navigateur web.</p></details>
+            <details><summary data-i18n="faq.q4">Est-ce en arabe ?</summary><p data-i18n="faq.a4">Oui, toute l'interface existe en arabe, de droite à gauche (RTL).</p></details>
+            <details><summary data-i18n="faq.q6">Ticket et TVA ?</summary><p data-i18n="faq.a6">L'app fournit un résumé des ventes. La facturation légale est prévue dans une prochaine version.</p></details>
+          </div>
+        </section>
+
+        <section class="x-final" aria-labelledby="final-title">
+          <h2 id="final-title" data-i18n="final.title">Rejoignez les commerçants qui passent au digital.</h2>
+          <p data-i18n="final.sub">Essayez la démo, puis recevez un devis adapté à votre commerce.</p>
+          <div class="links">
+            <a class="x-cta x-cta--light" href="#demo" data-i18n="cta.demo">Voir la démo</a>
+            <a class="btn" href="mailto:abdoubelloumi13@gmail.com?subject=Licence%20BelloCaisse" data-i18n="cta.quote">Demander un devis</a>
+          </div>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <div class="x-foot-brand">
+          <a class="x-brand" href="#top" aria-label="BelloCaisse">
+            <img src="bellocaisse_icon.png" alt="" width="36" height="36" />
+            <span class="x-word"><b>Bello</b><span>Caisse</span></span>
+          </a>
+          <p><span data-i18n="foot.contact">Contact :</span> <a class="link" href="mailto:abdoubelloumi13@gmail.com">abdoubelloumi13@gmail.com</a></p>
+          <p data-i18n="foot.made">Fait en Tunisie 🇹🇳 — © 2026 BelloCaisse.</p>
+        </div>
+        <nav aria-label="Retour aux sections" data-i18n-attr="aria-label:foot.navaria">
+          <a href="#top" data-i18n="nav.top">Haut</a>
+          <a href="#probleme" data-i18n="nav.problem">Problème</a>
+          <a href="#solution" data-i18n="nav.features">Fonctions</a>
+          <a href="#plateformes" data-i18n="nav.platforms">Plateformes</a>
+          <a href="#pour-qui" data-i18n="nav.who">Pour qui</a>
+          <a href="#demo" data-i18n="nav.demo">Démo</a>
+          <a href="#tarifs" data-i18n="nav.pricing">Tarifs</a>
+          <a href="#faq" data-i18n="nav.faq">FAQ</a>
+        </nav>
+        <a class="badge" href="https://hark.com/" target="_blank" rel="noopener"><span class="hark-mark"></span><span>built by hark</span></a>
+      </footer>
+    </div>
+    <script src="hark.js"></script>
+    <script>
+      /* The live demo's address: change it here and the iframe and the full-screen button follow. */
+      var DEMO_URL = "https://bellocaisse.github.io/demo/";
+      document.querySelectorAll("[data-demo-src]").forEach(function (el) {
+        if (el.getAttribute("src") !== DEMO_URL) el.setAttribute("src", DEMO_URL);
+      });
+      document.querySelectorAll("[data-demo-href]").forEach(function (el) { el.setAttribute("href", DEMO_URL); });
+    </script>
+    <script>
+      /*
+        One dictionary for every string on the page, keyed by data-i18n (text/HTML)
+        and data-i18n-attr ("attr:key;attr:key"). To add a language, add a block
+        with _label and _dir; to add a section, add its keys to each block.
+        A key missing in a language falls back to French.
+      */
+      var I18N = {
+        fr: {
+          _label: "FR", _dir: "ltr",
+          "meta.title": "BelloCaisse — La caisse intelligente des commerçants tunisiens",
+          "nav.aria": "Sections", "nav.top": "Haut",
+          "nav.problem": "Problème", "nav.features": "Fonctions", "nav.platforms": "Plateformes", "nav.who": "Pour qui",
+          "nav.demo": "Démo", "nav.pricing": "Tarifs", "nav.faq": "FAQ",
+          "hero.alt": "Commerçant tunisien dans son hanout, encaissant avec l'app BelloCaisse",
+          "hero.eyebrow": "BelloCaisse — La caisse intelligente des commerçants tunisiens",
+          "hero.title": "Votre caisse dans la poche.",
+          "hero.sub": "Vendez, scannez, suivez vos bénéfices en dinars — même sans internet.",
+          "cta.demo": "Voir la démo", "cta.quote": "Demander un devis",
+          "trust.1": "100% en dinar tunisien (DT, millimes)", "trust.2": "Français &amp; العربية",
+          "trust.3": "Fonctionne hors ligne", "trust.4": "23 044 produits tunisiens déjà référencés",
+          "trust.5": "Multiplateforme", "trust.6": "Multi-utilisateur",
+          "problem.eyebrow": "Le problème", "problem.title": "Vous connaissez ces soucis par cœur.",
+          "p1.h": "Le karné qui se perd", "p1.t": "Le cahier de crédit s'abîme ou se perd, et plus personne ne sait qui doit combien.",
+          "p2.h": "Erreurs de monnaie", "p2.t": "Un rendu de monnaie raté par jour, ce sont des dinars perdus chaque mois.",
+          "p3.h": "Le stock part sans prévenir", "p3.t": "Les rayons se vident et vous le découvrez quand le client demande.",
+          "p4.h": "Des caisses trop chères", "p4.t": "Une caisse enregistreuse coûte souvent 800 à 2 000 DT.",
+          "p5.h": "Aucune vision du bénéfice", "p5.t": "Le tiroir est plein, mais combien avez-vous vraiment gagné ?",
+          "feat.eyebrow": "La solution · app v1.2.0", "feat.title": "Tout pour encaisser, déjà dans votre téléphone.",
+          "f1.h": "Vente rapide et panier", "f1.t": "Ajoutez, ajustez les quantités, encaissez : la monnaie à rendre est calculée.",
+          "f2.h": "Scan code-barres", "f2.t": "La caméra du téléphone suffit, aucun lecteur à acheter.",
+          "f3.h": "Catalogue Tunisie", "f3.t": "23 044 produits (références Carrefour et Géant) pour créer votre stock en secondes.",
+          "f4.h": "Stock et alertes", "f4.t": "Suivez chaque article et soyez prévenu avant la rupture.",
+          "f5.h": "Rapports animés", "f5.t": "Ventes du jour, bénéfices, meilleurs produits.",
+          "f6.h": "Français et arabe", "f6.t": "Interface complète dans les deux langues, l'arabe de droite à gauche.",
+          "f7.h": "Onboarding guidé", "f7.t": "L'app vous accompagne pas à pas dès la première ouverture.",
+          "f8.h": "Sans internet", "f8.t": "Vendez même quand le réseau coupe.",
+          "multi.eyebrow": "Partout, pour toute l'équipe", "multi.title": "Multiplateforme &amp; multi-utilisateur",
+          "multi.sub": "Une seule caisse sur tous vos appareils, avec un accès pour chacun.", "multi.web": "Navigateur web",
+          "multi.c1.h": "Tous vos appareils", "multi.c1.t": "Téléphone, tablette, ordinateur ou navigateur web : la même app sous Android, iOS, Windows, macOS et Linux.",
+          "multi.c2.h": "Plusieurs utilisateurs", "multi.c2.t": "Patron, caissiers, employés : chacun a son propre accès dans la boutique.",
+          "multi.c3.h": "Plusieurs caisses", "multi.c3.t": "Plusieurs appareils et caisses dans le même commerce.",
+          "who.eyebrow": "Pour qui", "who.title": "Pour tous les commerces de Tunisie.",
+          "who.sub": "Hanout, supérette, café, restaurant, boutique, parapharmacie, quincaillerie, marché hebdomadaire.",
+          "s1.h": "Épiceries &amp; hanouts", "s1.t": "Fini le karné papier.",
+          "s2.h": "Supérettes", "s2.t": "Scan + stock, sans matériel en plus.",
+          "s3.h": "Cafés &amp; restaurants", "s3.t": "Vente en 2 touches, même au coup de feu.",
+          "s3.alt": "Serveur de café tunisien encaissant une commande avec BelloCaisse",
+          "s4.h": "Boutiques &amp; prêt-à-porter", "s4.t": "Vos articles et vos ventes au même endroit.",
+          "s5.h": "Parapharmacies &amp; cosmétiques", "s5.t": "Scannez les références, suivez le stock.",
+          "s6.h": "Vendeurs de marché &amp; ambulants", "s6.t": "Tout sur le téléphone.",
+          "how.eyebrow": "Comment ça marche", "how.title": "Prêt à vendre en trois étapes.",
+          "how.s1.e": "Étape 1", "how.s1.h": "Demandez votre licence", "how.s1.t": "Écrivez-nous : nous vous envoyons un devis adapté à votre commerce.",
+          "how.s2.e": "Étape 2", "how.s2.h": "Installation sur vos appareils", "how.s2.t": "Android, iOS, Windows, macOS, Linux ou navigateur web, puis vos produits depuis le catalogue Tunisie.",
+          "how.s3.e": "Étape 3", "how.s3.h": "Encaissez et suivez vos bénéfices", "how.s3.t": "Chaque vente alimente vos rapports du jour.",
+          "demo.eyebrow": "Démo en direct", "demo.title": "Essayez l'app ici, sans rien installer.",
+          "demo.frame": "Démo BelloCaisse", "demo.head": "Démo",
+          "demo.lead": "<strong>La vraie app, dans votre navigateur.</strong> Faites une vente, puis ouvrez les rapports.",
+          "demo.full": "Ouvrir la démo en plein écran", "demo.note": "Démo : données fictives, rien n'est enregistré.",
+          "price.eyebrow": "Offre de lancement Tunisie", "price.title": "Licences BelloCaisse — vendues à l'unité",
+          "price.line": "Bien moins cher qu'une caisse enregistreuse à 1 000 DT.",
+          "price.label": "Prix de lancement",
+          "price.pay": "Paiement possible par D17, carte e-Dinar, virement ou espèces via nos ambassadeurs.",
+          "plan.quote": "Sur devis",
+          "plan.post": "Licence Poste", "plan.post.for": "Pour une caisse.", "plan.post.1": "1 appareil",
+          "plan.pick": "Recommandé", "plan.pro": "Licence Pro", "plan.pro.for": "Pour suivre le crédit et vos chiffres.",
+          "plan.pro.1": "Rapports avancés", "plan.pro.2": "Crédit clients (karné numérique)", "plan.pro.3": "Export", "plan.pro.4": "Sauvegarde",
+          "plan.multi": "Licence Multi-boutique", "plan.multi.for": "Pour les commerces avec une équipe.",
+          "plan.multi.1": "Plusieurs caisses et utilisateurs", "plan.multi.2": "Support prioritaire",
+          "cmp.eyebrow": "Pourquoi BelloCaisse", "cmp.title": "Plus complet qu'un cahier, moins cher qu'une caisse.",
+          "cmp.col0": "Critère", "cmp.col2": "Caisse enregistreuse classique", "cmp.col3": "Cahier papier",
+          "cmp.r1": "Coût de départ", "cmp.r2": "Scan code-barres", "cmp.r3": "Rapports bénéfices",
+          "cmp.r4": "Arabe &amp; français", "cmp.r5": "Sur votre téléphone", "cmp.r6": "Multi-utilisateur", "cmp.r7": "Multiplateforme",
+          "v.license": "Licence abordable", "v.dt0": "0 DT", "v.dtrange": "800–2 000 DT", "v.yes": "Oui", "v.no": "Non", "v.limited": "Limité", "v.rarely": "Rarement",
+          "amb.eyebrow": "Ambassadeurs &amp; parrainage", "amb.title": "Un voisin commerçant ? Passez Pro ensemble.",
+          "amb.c1.h": "Parrainage", "amb.c1.t": "Parrainez un commerçant voisin : une remise sur votre prochaine licence.",
+          "amb.c2.h": "Ambassadeurs", "amb.c2.t": "Ambassadeurs BelloCaisse dans chaque gouvernorat : installation gratuite en boutique.",
+          "g.tunis": "Tunis", "g.ariana": "Ariana", "g.benarous": "Ben Arous", "g.manouba": "Manouba", "g.sfax": "Sfax",
+          "g.sousse": "Sousse", "g.monastir": "Monastir", "g.nabeul": "Nabeul", "g.bizerte": "Bizerte", "g.kairouan": "Kairouan",
+          "g.gabes": "Gabès", "g.medenine": "Médenine", "g.gafsa": "Gafsa", "g.all": "… et les 24 gouvernorats",
+          "faq.eyebrow": "FAQ", "faq.title": "Vos questions, nos réponses.",
+          "faq.q1": "Faut-il internet ?", "faq.a1": "Non. BelloCaisse fonctionne entièrement hors ligne.",
+          "faq.q2": "Mes données sont-elles en sécurité ?", "faq.a2": "Elles sont stockées sur votre appareil, pas sur un serveur.",
+          "faq.q3": "Quel appareil faut-il ?", "faq.a3": "Un appareil Android, iOS, Windows, macOS ou Linux, ou simplement un navigateur web.",
+          "faq.q4": "Est-ce en arabe ?", "faq.a4": "Oui, toute l'interface existe en arabe, de droite à gauche (RTL).",
+          "faq.q6": "Ticket et TVA ?", "faq.a6": "L'app fournit un résumé des ventes. La facturation légale est prévue dans une prochaine version.",
+          "final.title": "Rejoignez les commerçants qui passent au digital.", "final.sub": "Essayez la démo, puis recevez un devis adapté à votre commerce.",
+          "foot.contact": "Contact :", "foot.made": "Fait en Tunisie 🇹🇳 — © 2026 BelloCaisse.", "foot.navaria": "Retour aux sections"
+        },
+        ar: {
+          _label: "العربية", _dir: "rtl",
+          "meta.title": "BelloCaisse — الكاشير الذكي للتجّار التونسيين",
+          "nav.aria": "الأقسام", "nav.top": "فوق",
+          "nav.problem": "المشكل", "nav.features": "الميزات", "nav.platforms": "المنصّات", "nav.who": "لمن",
+          "nav.demo": "تجربة", "nav.pricing": "الأسعار", "nav.faq": "أسئلة",
+          "hero.alt": "تاجر تونسي في حانوتو يخلّص بتطبيق BelloCaisse",
+          "hero.eyebrow": "BelloCaisse — الكاشير الذكي للتجّار التونسيين",
+          "hero.title": "كاشيرك في جيبك.",
+          "hero.sub": "بع، سكاني، وتابع أرباحك بالدينار — حتى بدون إنترنت.",
+          "cta.demo": "شوف الديمو", "cta.quote": "اطلب عرض سعر",
+          "trust.1": "100% بالدينار التونسي (د.ت، مليم)", "trust.2": "Français &amp; العربية",
+          "trust.3": "يخدم بدون إنترنت", "trust.4": "23 044 منتوج تونسي مسجّل من توّا",
+          "trust.5": "متعدّد المنصّات", "trust.6": "متعدّد المستخدمين",
+          "problem.eyebrow": "المشكل", "problem.title": "تعرف هالمشاكل بالحرف.",
+          "p1.h": "الكرني اللي يضيع", "p1.t": "كرني الكريدي يتقطّع ولا يضيع، وما عادش حد يعرف شكون يتسال قدّاش.",
+          "p2.h": "غلطات في الصرف", "p2.t": "غلطة وحدة في الصرف كل نهار، معناها دنانير ضايعة كل شهر.",
+          "p3.h": "السلعة تخلص من غير ما تحسّ", "p3.t": "الرفوف تفرغ وما تعرفش إلا كي يطلب الحريف.",
+          "p4.h": "كاشيرات غالية برشا", "p4.t": "الكاشير العادي يتكلّف غالباً من 800 لـ 2 000 د.ت.",
+          "p5.h": "ما تعرفش ربحك الحقيقي", "p5.t": "الدرج مليان، أما قدّاش ربحت بالحق؟",
+          "feat.eyebrow": "الحل · التطبيق v1.2.0", "feat.title": "كل ما يلزمك باش تخلّص، موجود في تليفونك.",
+          "f1.h": "بيع سريع وسلّة", "f1.t": "زيد، بدّل الكميات، خلّص، والصرف يتحسب وحدو.",
+          "f2.h": "سكان الكود-بار", "f2.t": "كاميرا التليفون تكفي، ما تحتاجش تشري قارئ.",
+          "f3.h": "كاتالوغ تونس", "f3.t": "23 044 منتوج (مراجع كارفور وجيان) باش تعمل مخزونك في ثواني.",
+          "f4.h": "المخزون والتنبيهات", "f4.t": "تابع كل منتوج ويجيك تنبيه قبل ما يخلص.",
+          "f5.h": "تقارير متحرّكة", "f5.t": "مبيعات النهار، الأرباح، وأحسن المنتوجات.",
+          "f6.h": "فرنسية وعربية", "f6.t": "واجهة كاملة باللغتين، والعربية من اليمين لليسار.",
+          "f7.h": "بداية بالدليل", "f7.t": "التطبيق يمشي معاك خطوة بخطوة من أول مرة تحلّو.",
+          "f8.h": "بدون إنترنت", "f8.t": "بيع حتى كي تقصّ الشبكة.",
+          "multi.eyebrow": "في كل بلاصة، لكل الفريق", "multi.title": "متعدّد المنصّات ومتعدّد المستخدمين",
+          "multi.sub": "كاشير واحد على الأجهزة الكل متاعك، وكل واحد عندو الدخول متاعو.", "multi.web": "المتصفّح",
+          "multi.c1.h": "الأجهزة الكل متاعك", "multi.c1.t": "تليفون، تابلات، كمبيوتر ولا المتصفّح: نفس التطبيق على أندرويد، iOS، ويندوز، ماك ولينكس.",
+          "multi.c2.h": "عدّة مستخدمين", "multi.c2.t": "المعلّم، الكاسييرة، الخدّامة: كل واحد عندو الدخول متاعو في المحل.",
+          "multi.c3.h": "عدّة كاشيرات", "multi.c3.t": "عدّة أجهزة وكاشيرات في نفس المحل.",
+          "who.eyebrow": "لمن", "who.title": "لكل المحلات في تونس.",
+          "who.sub": "حانوت، سوبيرات، قهوة، ريستوران، بوتيك، بارافارماسي، كينكايري، سوق أسبوعي.",
+          "s1.h": "العطّارة والحوانت", "s1.t": "وداعاً للكرني الورقي.",
+          "s2.h": "السوبيرات", "s2.t": "سكان ومخزون، بلا معدّات زايدة.",
+          "s3.h": "القهاوي والريستورانات", "s3.t": "البيع في زوز لمسات، حتى في وقت الزحمة.",
+          "s3.alt": "قهواجي تونسي يخلّص كوموند بتطبيق BelloCaisse",
+          "s4.h": "البوتيكات والملابس", "s4.t": "سلعتك ومبيعاتك في بلاصة وحدة.",
+          "s5.h": "البارافارماسي ومواد التجميل", "s5.t": "سكاني المراجع وتابع المخزون.",
+          "s6.h": "باعة السوق والمتجوّلين", "s6.t": "كل شي في التليفون.",
+          "how.eyebrow": "كيفاش يخدم", "how.title": "حاضر للبيع في ثلاث خطوات.",
+          "how.s1.e": "الخطوة 1", "how.s1.h": "اطلب الليسانس متاعك", "how.s1.t": "ابعثلنا ونبعثولك عرض سعر على قياس محلّك.",
+          "how.s2.e": "الخطوة 2", "how.s2.h": "التنصيب على أجهزتك", "how.s2.t": "أندرويد، iOS، ويندوز، ماك، لينكس ولا المتصفّح، ومبعد زيد منتوجاتك من كاتالوغ تونس.",
+          "how.s3.e": "الخطوة 3", "how.s3.h": "خلّص وتابع أرباحك", "how.s3.t": "كل بيعة تدخل في تقارير النهار.",
+          "demo.eyebrow": "تجربة مباشرة", "demo.title": "جرّب التطبيق هنا، بلا ما تنصّب شي.",
+          "demo.frame": "ديمو BelloCaisse", "demo.head": "ديمو",
+          "demo.lead": "<strong>التطبيق الحقيقي في المتصفّح متاعك.</strong> اعمل بيعة، ومبعد حلّ التقارير.",
+          "demo.full": "حلّ الديمو في الشاشة الكاملة", "demo.note": "ديمو: معطيات وهمية، ما يتسجّل شي.",
+          "price.eyebrow": "عرض الإطلاق في تونس", "price.title": "ليسانسات BelloCaisse — تتباع بالوحدة",
+          "price.line": "أرخص برشا من كاشير بـ 1 000 د.ت.",
+          "price.label": "سعر الإطلاق",
+          "price.pay": "الخلاص ممكن بـ D17، كارت e-Dinar، تحويل بنكي ولا كاش عن طريق السفراء متاعنا.",
+          "plan.quote": "حسب عرض السعر",
+          "plan.post": "ليسانس جهاز", "plan.post.for": "لكاشير واحد.", "plan.post.1": "جهاز واحد",
+          "plan.pick": "ننصحوك بيه", "plan.pro": "ليسانس Pro", "plan.pro.for": "باش تتابع الكريدي والأرقام متاعك.",
+          "plan.pro.1": "تقارير متقدّمة", "plan.pro.2": "كريدي الحرفاء (كرني رقمي)", "plan.pro.3": "تصدير", "plan.pro.4": "نسخة احتياطية",
+          "plan.multi": "ليسانس عدّة محلات", "plan.multi.for": "للمحلات اللي فيها فريق.",
+          "plan.multi.1": "عدّة كاشيرات ومستخدمين", "plan.multi.2": "دعم بالأولوية",
+          "cmp.eyebrow": "علاش BelloCaisse", "cmp.title": "أكمل من الكرني، وأرخص من الكاشير.",
+          "cmp.col0": "المعيار", "cmp.col2": "كاشير عادي", "cmp.col3": "كرني ورقي",
+          "cmp.r1": "تكلفة البداية", "cmp.r2": "سكان الكود-بار", "cmp.r3": "تقارير الأرباح",
+          "cmp.r4": "عربي وفرنسي", "cmp.r5": "في تليفونك", "cmp.r6": "متعدّد المستخدمين", "cmp.r7": "متعدّد المنصّات",
+          "v.license": "ليسانس بسوم معقول", "v.dt0": "0 د.ت", "v.dtrange": "800–2 000 د.ت", "v.yes": "نعم", "v.no": "لا", "v.limited": "محدود", "v.rarely": "نادراً",
+          "amb.eyebrow": "السفراء والدعوة", "amb.title": "عندك جار تاجر؟ تعدّاو لـ Pro مع بعضكم.",
+          "amb.c1.h": "ادعُ صاحبك", "amb.c1.t": "ادعُ تاجر جارك: تخفيض على الليسانس الجاية متاعك.",
+          "amb.c2.h": "السفراء", "amb.c2.t": "سفراء BelloCaisse في كل ولاية: تنصيب مجاني في المحل.",
+          "g.tunis": "تونس", "g.ariana": "أريانة", "g.benarous": "بن عروس", "g.manouba": "منوبة", "g.sfax": "صفاقس",
+          "g.sousse": "سوسة", "g.monastir": "المنستير", "g.nabeul": "نابل", "g.bizerte": "بنزرت", "g.kairouan": "القيروان",
+          "g.gabes": "قابس", "g.medenine": "مدنين", "g.gafsa": "قفصة", "g.all": "… وكل الولايات الـ24",
+          "faq.eyebrow": "أسئلة متكرّرة", "faq.title": "أسئلتكم، وأجوبتنا.",
+          "faq.q1": "يلزم إنترنت؟", "faq.a1": "لا. BelloCaisse يخدم كامل بدون إنترنت.",
+          "faq.q2": "المعطيات متاعي في أمان؟", "faq.a2": "تتسجّل في الجهاز متاعك، موش في سيرفر.",
+          "faq.q3": "شنوّة الجهاز اللي يلزم؟", "faq.a3": "جهاز أندرويد، iOS، ويندوز، ماك ولا لينكس، ولا متصفّح ويب برك.",
+          "faq.q4": "موجود بالعربي؟", "faq.a4": "إيه، الواجهة كاملة بالعربي من اليمين لليسار (RTL).",
+          "faq.q6": "التيكي والأداء على القيمة المضافة؟", "faq.a6": "التطبيق يعطيك ملخّص المبيعات. الفوترة القانونية مبرمجة في نسخة جاية.",
+          "final.title": "انضمّ للتجّار اللي تعدّاو للرقمي.", "final.sub": "جرّب الديمو، ومبعد خوذ عرض سعر على قياس محلّك.",
+          "foot.contact": "اتصل بينا:", "foot.made": "صُنع في تونس 🇹🇳 — © 2026 BelloCaisse.", "foot.navaria": "الرجوع للأقسام"
+        }
+      };
+
+      (function () {
+        var doc = document, root = doc.documentElement;
+        var all = function (sel) { return [].slice.call(doc.querySelectorAll(sel)); };
+        function t(lang, key) {
+          var d = I18N[lang] || {};
+          return Object.prototype.hasOwnProperty.call(d, key) ? d[key] : I18N.fr[key];
+        }
+        var box = doc.getElementById("x-lang");
+        Object.keys(I18N).forEach(function (code) {
+          var b = doc.createElement("button");
+          b.type = "button";
+          b.lang = code;
+          b.setAttribute("data-lang", code);
+          b.textContent = I18N[code]._label;
+          b.addEventListener("click", function () { apply(code, true); });
+          box.appendChild(b);
+        });
+        function apply(lang, push) {
+          if (!I18N[lang]) lang = "fr";
+          root.lang = lang;
+          root.dir = I18N[lang]._dir || "ltr";
+          all("[data-i18n]").forEach(function (el) {
+            var v = t(lang, el.getAttribute("data-i18n"));
+            if (v != null) el.innerHTML = v;
+          });
+          all("[data-i18n-attr]").forEach(function (el) {
+            el.getAttribute("data-i18n-attr").split(";").forEach(function (pair) {
+              var p = pair.split(":"), v = t(lang, p[1]);
+              if (p[0] && v != null) el.setAttribute(p[0].trim(), v);
+            });
+          });
+          doc.title = t(lang, "meta.title");
+          all("[data-lang]").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+          all(".table-wrap table").forEach(function (tb) {
+            var names = [].map.call(tb.querySelectorAll("thead th"), function (th) { return th.textContent.trim(); });
+            [].forEach.call(tb.querySelectorAll("tbody tr"), function (tr) {
+              [].forEach.call(tr.children, function (c, i) { if (c.tagName === "TD" && names[i]) c.setAttribute("data-label", names[i]); });
+            });
+          });
+          if (push) {
+            try {
+              var u = new URL(location.href);
+              if (lang === "fr") u.searchParams.delete("lang"); else u.searchParams.set("lang", lang);
+              history.replaceState(null, "", u.toString());
+            } catch (e) { /* sandboxed or file URL: the language still switches */ }
+          }
+        }
+        var q = null;
+        try { q = new URLSearchParams(location.search).get("lang"); } catch (e) {}
+        apply(q && I18N[q] ? q : "fr", false);
+      })();
+    </script>
+  </body>
+</html>
